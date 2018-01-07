@@ -91,3 +91,6 @@ for key, value in sorted(word_time_freq.items(), key=lambda x: (x[1]['overall_fr
     i += 1
     t100_freq_over_time_writer.writerow(row+val)
 
+
+                
+                

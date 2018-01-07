@@ -6,6 +6,7 @@ Created on Fri Jan  5 20:11:32 2018
 @author: yanchenm
 """
 
+import nltk
 
 from nltk import ne_chunk, pos_tag, word_tokenize
 from nltk.tree import Tree
@@ -14,38 +15,45 @@ import string
 #nltk.help.upenn_tagset('NNS')
 from collections import Counter
 from time import gmtime, strftime
-#txt = " obama beijing how google to remove adware computer" 
-#chunkated = pos_tag(word_tokenize(txt))
+txt = "sam's club mr. smith"
+#txt = " Obama google beijing how to remove adware computer" 
+print(word_tokenize(txt))
+chunkated = pos_tag(word_tokenize(txt))
 #counts = Counter(tag for word,tag in chunkated)
-#
-#print(chunkated)
+chunkParser = nltk.RegexpParser(chunkGram)
+chunked = chunkParser.parse(chunkated)
+#chunked.draw()
+print((chunked))
 #print(ne_chunk(pos_tag(word_tokenize(txt)), binary=True))
-#print(counts)
 
 
 def filt(x):
-    return x.label()=='NE'
+    return x.label()=='Chunk'
 
 COUNT = 0
 
 def get_NN_from_text(text):
 #    chunked = ne_chunk(pos_tag(word_tokenize(text)), binary=True)
+    chunkGram = r"""Chunk: {<NN.?>+}"""
     chunkated = pos_tag(word_tokenize(text))
-    counts = Counter(tag for word,tag in chunkated)
+    chunkParser = nltk.RegexpParser(chunkGram)
+    chunked = chunkParser.parse(chunkated)
+#    counts = Counter(tag for word,tag in chunkated)
     global COUNT
     COUNT = COUNT+1
     if COUNT % 100000 == 0:
         print(strftime("%Y-%m-%d %H:%M:%S", gmtime()))
 
     num_entity = 0
-#    for subtree in chunked.subtrees(filter =  filt): # Generate all subtrees
-#        num_entity += 1
-    if 'NN' in counts:
-        num_entity += counts['NN']
-    if'NNP' in counts:
-        num_entity += counts['NNP']
-    if'NNS' in counts:
-        num_entity += counts['NNS']
+    for subtree in chunked.subtrees(filter =  filt): # Generate all subtrees
+        num_entity += 1
+        
+#    if 'NN' in counts:
+#        num_entity += counts['NN']
+#    if'NNP' in counts:
+#        num_entity += counts['NNP']
+#    if'NNS' in counts:
+#        num_entity += counts['NNS']
     
     return num_entity
     
